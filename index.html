@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html ng-app>
+<head>
+    <title>DashES Elastic Search</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <script src="js/angular.min.js"></script>
+    <script src="js/dashes.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <a class="brand" href="#">&nbsp;&nbsp; DashES</a>
+            <ul class="nav">
+                <li class="active"><a href="#">Overview</a></li>
+                <li><a href="#">Browser</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid" style="margin-top:60px" ng-controller="ClusterStatusCtrl">
+        <div class="row-fluid">
+            <div class="span7">
+                <div class="well well-small">
+                    <div class="row-fluid">
+                        <div class="span2">
+                            <h4>Indexes</h4>
+                        </div>
+                        <div class="span2">
+                            <form class="form-search">
+                              <input type="text" class="input-medium search-query" placeholder="filter" ng-model="search.key">
+                            </form>
+                        </div>
+                    </div>
+                    <table class="table">
+                        <tr>
+                            <th>Index Name</th>
+                            <th>Documents</th>
+                            <th>Size</th>
+                            <th>Indexing</th>
+                        </tr>
+                        <tr ng-repeat="index in indices | filter:search | orderBy:'key'">
+                            <td>{{index.key}}</td>
+                            <td>{{index.stats.primaries.docs.count | number }}</td>
+                            <td>{{index.stats.primaries.store.size}}</td>
+                            <td>{{index.stats.primaries.indexing.index_current}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="span5">
+                <div class="well well-small">
+                    <h4>Cluster  {{cluster.cluster_name}} Status: <span class="label label-{{cluster.status_label}}">{{cluster.status}}</span></h4>
+                    <dl class="dl-horizontal">
+                        <dt>Timed Out</dt>
+                        <dd><span class="label label-{{cluster.timed_out_label}}">{{cluster.timed_out}}</label></dd>
+                        <dt>Number of Nodes</dt>
+                        <dd><span class="label label-inverse">{{cluster.number_of_nodes}}</label></dd>
+                        <dt>Number of Data Nodes</dt>
+                        <dd><span class="label label-inverse">{{cluster.number_of_data_nodes}}</label></dd>
+                        <dt>Active Primary Shards</dt>
+                        <dd><span class="label label-inverse">{{cluster.active_primary_shards}}</label></dd>
+                        <dt>Active Shards</dt>
+                        <dd><span class="label label-inverse">{{cluster.active_shards}}</label></dd>
+                        <dt>Relocating Shards</dt>
+                        <dd><span class="label label-{{cluster.relocating_shards_label}}">{{cluster.relocating_shards}}</label></dd>
+                        <dt>Initializing Shards</dt>
+                        <dd><span class="label label-{{cluster.initializing_shards_label}}">{{cluster.initializing_shards}}</label></dd>
+                        <dt>Unassigned Shards</dt>
+                        <dd><span class="label label-{{cluster.unassigned_shards_label}}">{{cluster.unassigned_shards}}</label></dd>
+                    </dl>
+                </div>
+                <div class="well well-small">
+                    <h4>Nodes: </h4>
+                    <table class="table">
+                        <tr>
+                            <th>Name</th>
+                            <th>Shards</th>
+                            <th>Relo</th>
+                            <th>Init</th>
+                            <th>Size</th>
+                            <th>Qry</th>
+                            <th></th>
+                        </tr>
+                        <tr ng-repeat="nodeobj in nodes | orderBy:'name'">
+                            <!-- orderBy:'((((bad_initializing_shard_count*2.1)+initializing_shard_count)+(relocating_shard_count*1.1))*100)+shard_count':true -->
+                            <td>{{nodeobj.name}}</td>
+                            <td><span class="badge" ng-class="{'badge-info': nodeobj.shard_count > 0 }">{{nodeobj.shard_count}}</span></td>
+                            <td><span class="badge" ng-class="{'badge-warning': nodeobj.relocating_shard_count > 0 }">{{nodeobj.relocating_shard_count}}</span></td>
+                            <td><span class="badge badge-{{nodeobj.initializing_class}}">{{nodeobj.bad_initializing_shard_count}}/{{nodeobj.initializing_shard_count}}</span></td>
+                            <td>{{nodeobj.indices.store.size}}</td>
+                            <td><span class="badge badge-inverse">{{nodeobj.indices.search.query_current}}</span></td>
+                            <td><button class="btn btn-mini btn-primary" type="button"><i class="icon-info-sign icon-white"></i></button></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+</body>
+</html>
