@@ -1,46 +1,90 @@
-function ClusterStatusCtrl($scope, $http, $filter) {
+angular.module('dashES', ['controllers', 'services'])
 
-  $http.get('http://localhost:9200/_cluster/health').success(function(data) {
+// Angular Services Registrations
+angular.module("dashES").factory("appConfigService", function() {
+  var conf = {
+    es_host: null
+  };
+  return conf;
+});
+
+angular.module("dashES").factory("clusterHealthService", function($http, appConfigService) {
+  var app_config = appConfigService;
+  
+  var retobj = {
+    get: function(callback){
+      $http.get(app_config.es_host+'/_cluster/health').success(function(data) {
+        cluster = data;
+
+        // Timed Out Label
+        if (data.timed_out) {
+          cluster.timed_out_label = "important"
+        } else if (!data.timed_out) {
+          cluster.timed_out_label = "success"
+        }
+
+        // Status Label
+        if (data.status == "green") {
+          cluster.status_label = "success"
+        } else if (data.status == "red") {
+          cluster.status_label = "important"
+        } else if (data.status == "yellow") {
+          cluster.status_label = "warning"
+        }
+
+        // Relocating Shards Label
+        if (data.relocating_shards > 0) {
+          cluster.relocating_shards_label = "warning"
+        } else {
+          cluster.relocating_shards_label = "success"
+        }
+
+        // Initializing Shards Label
+        if (data.initializing_shards > 0) {
+          cluster.initializing_shards_label = "important"
+        } else {
+          cluster.initializing_shards_label = "success"
+        }
+
+        // Unassigned Shards Label
+        if (data.unassigned_shards > 0) {
+          cluster.unassigned_shards_label = "important"
+        } else {
+          cluster.unassigned_shards_label = "success"
+        }
+        callback(cluster);
+        this.data = cluster;
+      });
+    },
+    data: {}
+  };
+  
+  return retobj;
+  
+});
+
+// Controllers
+function DashESCtrl($scope, appConfigService, clusterHealthService) {
+  $scope.app_config = appConfigService;
+  $scope.app_config.es_host = 'http://localhost:9205';
+  $scope.cluster = clusterHealthService.data;
+
+  clusterHealthService.get(function(data){
     $scope.cluster = data;
-
-    // Timed Out Label
-    if (data.timed_out) {
-      $scope.cluster.timed_out_label = "important"
-    } else if (!data.timed_out) {
-      $scope.cluster.timed_out_label = "success"
-    }
-
-    // Status Label
-    if (data.status == "green") {
-      $scope.cluster.status_label = "success"
-    } else if (data.status == "red") {
-      $scope.cluster.status_label = "important"
-    } else if (data.status == "yellow") {
-      $scope.cluster.status_label = "warning"
-    }
-
-    // Relocating Shards Label
-    if (data.relocating_shards > 0) {
-      $scope.cluster.relocating_shards_label = "warning"
-    } else {
-      $scope.cluster.relocating_shards_label = "success"
-    }
-
-    // Initializing Shards Label
-    if (data.initializing_shards > 0) {
-      $scope.cluster.initializing_shards_label = "important"
-    } else {
-      $scope.cluster.initializing_shards_label = "success"
-    }
-
-    // Unassigned Shards Label
-    if (data.unassigned_shards > 0) {
-      $scope.cluster.unassigned_shards_label = "important"
-    } else {
-      $scope.cluster.unassigned_shards_label = "success"
-    }
-
   });
+
+  //$scope.refresh = function() {
+  //  this.clusterHealthService.get(function(data){
+  //    $scope.clusterHealthService.data = data;
+  //  });
+  //};
+  
+}
+
+function ClusterStatusCtrl($scope, $http, $filter, appConfigService, clusterHealthService) {
+
+  $scope.app_config = appConfigService;
+  $scope.cluster = clusterHealthService.data;
 
   $http.get('http://localhost:9200/_stats?clear=true&docs=true&store=true&indexing=true').success(function(data) {
     $scope.indices = data.indices;

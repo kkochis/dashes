@@ -1,21 +1,29 @@
 <!DOCTYPE html>
-<html ng-app>
+<html ng-app="dashES">
 <head>
     <title>DashES Elastic Search</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <script src="js/angular.min.js"></script>
+    <link href="lib/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="css/dashes.css" rel="stylesheet" media="screen">
+    <script src="lib/angular.min.js"></script>
+    <script src="lib/bootstap.min.js"></script>
     <script src="js/dashes.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/controllers.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/services.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar navbar-inverse navbar-fixed-top" ng-controller="DashESCtrl">
         <div class="navbar-inner">
             <a class="brand" href="#">&nbsp;&nbsp; DashES</a>
             <ul class="nav">
                 <li class="active"><a href="#">Overview</a></li>
                 <li><a href="#">Browser</a></li>
             </ul>
+            <form class="navbar-form pull-right" ng-submit="refresh()">
+                <input type="text" class="span2" ng-model='app_config.es_host'>
+                <button type="submit" class="btn btn-inverse">Submit</button>{{cluster_health.data.cluster_name}}
+                &nbsp;&nbsp;
+            </form>
         </div>
     </div>
     <div class="container-fluid" style="margin-top:60px" ng-controller="ClusterStatusCtrl">
@@ -24,7 +32,7 @@
                 <div class="well well-small">
                     <div class="row-fluid">
                         <div class="span2">
-                            <h4>Indexes</h4>
+                            <h4>Indexes {{app_config.es_host}}</h4>
                         </div>
                         <div class="span2">
                             <form class="form-search">
