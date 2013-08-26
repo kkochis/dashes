@@ -8,10 +8,7 @@ angular.module('dashES.controllers',[])
   
       $scope.app_config = appConfigService;
       $scope.app_config.es_host = 'http://localhost:9200';
-      
-      clusterHealthService.get(function(data) {
-        $scope.cluster = data;
-      });
+      $scope.cluster = clusterHealthService.get();
 
       //$scope.refresh = function() {
       //  this.clusterHealthService.get(function(data){
@@ -27,9 +24,10 @@ angular.module('dashES.controllers',[])
     function($scope, $http, $filter, appConfigService, clusterHealthService) {
 
       $scope.app_config = appConfigService;
-      $scope.cluster = clusterHealthService.data;
+      $scope.cluster = clusterHealthService.get();
 
       // Timed Out Label
+      alert(JSON.stringify($scope.cluster))
       if ($scope.cluster.timed_out) {
         $scope.cluster.timed_out_label = "important"
       } else if (!$scope.cluster.timed_out) {
