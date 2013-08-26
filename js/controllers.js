@@ -10,12 +10,6 @@ angular.module('dashES.controllers',[])
       $scope.app_config.es_host = 'http://localhost:9200';
       $scope.cluster = clusterHealthService.get();
 
-      //$scope.refresh = function() {
-      //  this.clusterHealthService.get(function(data){
-      //    $scope.clusterHealthService.data = data;
-      //  });
-      //};
-
   }])
 
   // Cluster Status
@@ -26,43 +20,49 @@ angular.module('dashES.controllers',[])
       $scope.app_config = appConfigService;
       $scope.cluster = clusterHealthService.get();
 
-      // Timed Out Label
-      alert(JSON.stringify($scope.cluster))
-      if ($scope.cluster.timed_out) {
-        $scope.cluster.timed_out_label = "important"
-      } else if (!$scope.cluster.timed_out) {
-        $scope.cluster.timed_out_label = "success"
-      }
+      $scope.$watch('cluster', function(cluster) {
+        if (angular.isDefined(cluster)) {
+          // Timed Out Label
+          if (cluster.timed_out) {
+            cluster.timed_out_label = "important";
+          } else {
+            cluster.timed_out_label = "success";
+          }
+          // Status Label
+          if (cluster.status == "green") {
+            cluster.status_label = "success";
+          } else if (cluster.status == "red") {
+            cluster.status_label = "important";
+          } else if (cluster.status == "yellow") {
+            cluster.status_label = "warning";
+          }
 
-      // Status Label
-      if ($scope.cluster.status == "green") {
-        $scope.cluster.status_label = "success"
-      } else if ($scope.cluster.status == "red") {
-        $scope.cluster.status_label = "important"
-      } else if ($scope.cluster.status == "yellow") {
-        $scope.cluster.status_label = "warning"
-      }
+          // Relocating Shards Label
+          if (cluster.relocating_shards > 0) {
+            cluster.relocating_shards_label = "warning";
+          } else {
+            cluster.relocating_shards_label = "success";
+          }
 
-      // Relocating Shards Label
-      if ($scope.cluster.relocating_shards > 0) {
-        $scope.cluster.relocating_shards_label = "warning"
-      } else {
-        $scope.cluster.relocating_shards_label = "success"
-      }
+          // Initializing Shards Label
+          if (cluster.initializing_shards > 0) {
+            cluster.initializing_shards_label = "important";
+          } else {
+            cluster.initializing_shards_label = "success";
+          }
 
-      // Initializing Shards Label
-      if ($scope.cluster.initializing_shards > 0) {
-        $scope.cluster.initializing_shards_label = "important"
-      } else {
-        $scope.cluster.initializing_shards_label = "success"
-      }
+          // Unassigned Shards Label
+          if (cluster.unassigned_shards > 0) {
+            cluster.unassigned_shards_label = "important";
+          } else {
+            cluster.unassigned_shards_label = "success";
+          }
+        }
+        else {
+          
+        }
+      });
 
-      // Unassigned Shards Label
-      if ($scope.cluster.unassigned_shards > 0) {
-        $scope.cluster.unassigned_shards_label = "important"
-      } else {
-        $scope.cluster.unassigned_shards_label = "success"
-      }
 
       // I need to split out these into services still:
       $http.get('http://localhost:9200/_stats?clear=true&docs=true&store=true&indexing=true').success(function(data) {
