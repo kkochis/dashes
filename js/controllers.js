@@ -3,22 +3,22 @@ angular.module('dashES.controllers',[])
   // Primary App controller which takes care of default requests and
   // top navigation bar behavior
   .controller('DashESCtrl',
-    ['$scope', 'appConfigService', 'clusterHealthService', 
-    function($scope, appConfigService, clusterHealthService) {
-  
-      $scope.app_config = appConfigService;
+    ['$scope', 'appConfig', 'dashboardData', 
+    function($scope, appConfig, dashboardData) {
+
+      $scope.app_config = appConfig;
       $scope.app_config.es_host = 'http://localhost:9200';
-      $scope.cluster = clusterHealthService.get();
+      $scope.cluster = dashboardData.get_health();
 
   }])
 
   // Cluster Status
   .controller('ClusterStatusCtrl',
-    ['$scope', '$http', '$filter', 'appConfigService', 'clusterHealthService',
-    function($scope, $http, $filter, appConfigService, clusterHealthService) {
+    ['$scope', '$http', '$filter', 'appConfig', 'dashboardData',
+    function($scope, $http, $filter, appConfig, dashboardData) {
 
-      $scope.app_config = appConfigService;
-      $scope.cluster = clusterHealthService.get();
+      $scope.app_config = appConfig;
+      $scope.cluster = dashboardData.get_health();
 
       $scope.$watch('cluster', function(cluster) {
         if (angular.isDefined(cluster)) {
