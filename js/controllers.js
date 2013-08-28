@@ -78,6 +78,9 @@ angular.module('dashES.controllers',[])
           });
           $scope.indices = indices;
 
+          //Call the sort method to start
+          $scope.updateSort();
+
           $http.get('http://localhost:9200/_cluster/nodes/stats').success(function(data) {
             // Turning the object into an array so Angular can sort it
             var nodes = $.map(data.nodes, function(k, v) {
@@ -118,4 +121,30 @@ angular.module('dashES.controllers',[])
         });
 
       });
+      
+      // Sorting variables
+      $scope.sort_by = "index_name";
+      $scope.sort_order = "asc";
+      $scope.updateSort = function() {
+        //console.log($scope.sort_by, $scope.sort_order);
+        //console.log('Called updateSort()');
+        $scope.indices = _.sortBy($scope.indices, function(index) {
+          switch ($scope.sort_by){
+            case 'index_name':
+              return index.key;
+            case 'documents':
+              return index.stats.primaries.docs.count;
+            case 'size':
+              return index.stats.primaries.store.size_in_bytes;
+            case 'indexing':
+              return index.stats.primaries.indexing.index_current;
+            default :
+              return index.key; // index_name is the default
+          }
+        });
+        if ($scope.sort_order == 'desc') {
+          $scope.indices = $scope.indices.reverse();
+        }
+      }
+
   }]);

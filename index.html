@@ -6,9 +6,11 @@
     <link href="lib/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="css/dashes.css" rel="stylesheet" media="screen">
     <script src="lib/angular.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="lib/underscore.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/dashes.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/controllers.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/services.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/modules.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top" ng-controller="DashESCtrl">
@@ -41,12 +43,12 @@
                     </div>
                     <table class="table">
                         <tr>
-                            <th>Index Name</th>
-                            <th>Documents</th>
-                            <th>Size</th>
-                            <th>Indexing</th>
+                            <th sortable="index_name|asc">Index Name</th>
+                            <th sortable="documents|desc">Documents</th>
+                            <th sortable="size|desc">Size</th>
+                            <th sortable="indexing|desc">Indexing</th>
                         </tr>
-                        <tr ng-repeat="index in indices | filter:search | orderBy:'key'">
+                        <tr ng-repeat="index in indices | filter:search">
                             <td>{{index.key}}</td>
                             <td>{{index.stats.primaries.docs.count | number }}</td>
                             <td>{{index.stats.primaries.store.size}}</td>
