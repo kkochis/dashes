@@ -13,18 +13,10 @@ angular.module('dashES.controllers',[])
 
   // Cluster Status
   .controller('ClusterStatusCtrl',
-    ['$scope', '$http', '$filter', 'appConfig', 'dashboardData',
-    function($scope, $http, $filter, appConfig, dashboardData) {
+    ['$scope', 'dashboardData',
+    function($scope, dashboardData) {
 
-      $scope.app_config = appConfig;
       $scope.cluster = dashboardData.get_health();
-      $scope.index_stats = dashboardData.get_indices();
-      // .routing_nodes.nodes
-      // .routing_table.indices
-      $scope.routing = dashboardData.get_routing();
-      $scope.node_stats = dashboardData.get_node_stats();
-      $scope.indices = [];
-      $scope.nodes = [];
 
       $scope.$watch('cluster', function(cluster) {
         if (angular.isDefined(cluster)) {
@@ -66,20 +58,16 @@ angular.module('dashES.controllers',[])
         }
       });
 
-      $scope.$watch('[routing.routing_table, index_stats]', function (args) {
-        // Turning the Index info into an array so Angualar can sort it and joining in some of the
-        // index routing data
-        var routing_table = args[0];
-        var index_stats = args[1];
-        if (angular.isDefined(routing_table) && angular.isDefined(index_stats)) {
-          var indices = $.map(routing_table.indices, function(k, v) {
-            k.key = v;
-            k.stats = index_stats.indices[v]
-            return [k];
-          });
-          $scope.indices = indices;
-        }
-      }, true);
+  }])
+
+  // Nodes Listing
+  .controller('NodeListCtrl',
+    ['$scope', '$filter', 'dashboardData', 
+    function($scope, $filter, dashboardData) {
+
+      $scope.routing = dashboardData.get_routing();
+      $scope.node_stats = dashboardData.get_node_stats();
+      $scope.nodes = [];
 
       $scope.$watch('[routing.routing_nodes.nodes, node_stats.nodes]', function (args) {
         // Turning the object into an array so Angular can sort it
@@ -119,6 +107,32 @@ angular.module('dashES.controllers',[])
               return [k];
           });
           $scope.nodes = nodes;
+        }
+      }, true);
+
+  }])
+
+  // Index Listing
+  .controller('IndexListCtrl',
+    ['$scope', 'dashboardData', 
+    function($scope, dashboardData) {
+
+      $scope.index_stats = dashboardData.get_indices();
+      $scope.routing = dashboardData.get_routing();
+      $scope.indices = [];
+
+      $scope.$watch('[routing.routing_table, index_stats]', function (args) {
+        // Turning the Index info into an array so Angualar can sort it and joining in some of the
+        // index routing data
+        var routing_table = args[0];
+        var index_stats = args[1];
+        if (angular.isDefined(routing_table) && angular.isDefined(index_stats)) {
+          var indices = $.map(routing_table.indices, function(k, v) {
+            k.key = v;
+            k.stats = index_stats.indices[v]
+            return [k];
+          });
+          $scope.indices = indices;
         }
       }, true);
 
