@@ -138,8 +138,6 @@ angular.module('dashES.controllers',[])
           $scope.updateSort();
         }
       }, true);
-
-      });
       
       // Sorting variables
       $scope.sort_by = "index_name";
