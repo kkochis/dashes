@@ -1,1 +1,1 @@
-angular.module('dashES', ['dashES.controllers', 'dashES.services']);
+angular.module('dashES', ['dashES.controllers', 'dashES.services', 'dashES.directives']);
