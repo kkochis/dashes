@@ -14,7 +14,7 @@
     /*adding css pointers adapted from http://www.yuiblog.com/blog/2010/11/22/css-quick-tip-css-arrows-and-shapes-without-markup/ */
     /*add a blank space and use a thick border deleting the 3 other borders to create this effect*/
     border: 5px solid transparent; /*the size of the pointer*/
-    border-bottom-color: #080D81; /*the color of the active item and only the top of the border is shown*/
+    border-bottom-color: #000; /*the color of the active item and only the top of the border is shown*/
     content: ' ';
     height: 0;
     width: 0;
@@ -30,7 +30,7 @@
     /*adding css pointers adapted from http://www.yuiblog.com/blog/2010/11/22/css-quick-tip-css-arrows-and-shapes-without-markup/ */
     /*add a blank space and use a thick border deleting the 3 other borders to create this effect*/
     border: 5px solid transparent; /*the size of the pointer*/
-    border-top-color: #080D81; /*the color of the active item and only the top of the border is shown*/
+    border-top-color: #000; /*the color of the active item and only the top of the border is shown*/
     content: ' ';
     height: 0;
     width: 0;
@@ -43,7 +43,11 @@
 }
 
 .sort_selected {
-    color: #080D81;
+    color: #000;
+}
+
+th {
+    color:#333;
 }
 
 /***** END sortable css ***/
